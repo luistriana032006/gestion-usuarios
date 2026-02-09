@@ -93,11 +93,30 @@ curl -X PUT http://localhost:8080/api/usuarios/1 \
 curl -X DELETE http://localhost:8080/api/usuarios/1
 ```
 
+## 🎨 Frontend Web
+
+El proyecto incluye una **interfaz web moderna y responsiva** accesible en:
+```
+http://localhost:8080
+```
+
+### Características del Frontend:
+- ✅ Formulario intuitivo para crear/editar usuarios
+- ✅ Tabla dinámica con búsqueda en tiempo real
+- ✅ Filtros por estado (Todos, Activos, Inactivos)
+- ✅ Modales para confirmaciones y detalles
+- ✅ Diseño responsivo (Desktop, Tablet, Móvil)
+- ✅ Alertas visuales de éxito/error
+- ✅ Iconos elegantes con Font Awesome
+
+Para más información: **[FRONTEND.md](./FRONTEND.md)**
+
 ## 📚 Documentación Completa
 
 Para una documentación más detallada, consulta:
 
 - **[README_CRUD.md](./README_CRUD.md)** - Guía completa del proyecto
+- **[FRONTEND.md](./FRONTEND.md)** - Documentación del frontend web
 - **[ENDPOINTS.md](./ENDPOINTS.md)** - Documentación exhaustiva de todos los endpoints
 - **[EJEMPLOS.md](./EJEMPLOS.md)** - Ejemplos prácticos en cURL, PowerShell y JavaScript
 

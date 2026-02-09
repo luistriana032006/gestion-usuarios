@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-primary sticky-top">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="fas fa-users"></i> Gestión de Usuarios
+            </span>
+            <span class="text-white">API REST v1.0</span>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Formulario de Creación/Edición -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0" id="formTitle">
+                            <i class="fas fa-user-plus"></i> Crear Usuario
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="usuarioForm">
+                            <input type="hidden" id="usuarioId">
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="nombre" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="apellido" class="form-label">Apellido *</label>
+                                <input type="text" class="form-control" id="apellido" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="contraseña" class="form-label">Contraseña *</label>
+                                <input type="password" class="form-control" id="contraseña" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="activo" checked>
+                                    <label class="form-check-label" for="activo">
+                                        Activo
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Guardar
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btnLimpiar" style="display:none;">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Alertas -->
+                        <div id="alertaExito" class="alert alert-success d-none mt-3" role="alert">
+                            <i class="fas fa-check-circle"></i> <span id="alertaExitoMsg"></span>
+                        </div>
+                        <div id="alertaError" class="alert alert-danger d-none mt-3" role="alert">
+                            <i class="fas fa-exclamation-circle"></i> <span id="alertaErrorMsg"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Usuarios -->
+            <div class="col-md-8">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list"></i> Lista de Usuarios
+                        </h5>
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" name="filtro" id="filtroTodos" value="todos" checked>
+                            <label class="btn btn-outline-light btn-sm" for="filtroTodos">Todos</label>
+
+                            <input type="radio" class="btn-check" name="filtro" id="filtroActivos" value="activos">
+                            <label class="btn btn-outline-light btn-sm" for="filtroActivos">Activos</label>
+
+                            <input type="radio" class="btn-check" name="filtro" id="filtroInactivos" value="inactivos">
+                            <label class="btn btn-outline-light btn-sm" for="filtroInactivos">Inactivos</label>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <!-- Barra de búsqueda -->
+                        <div class="p-3 border-bottom">
+                            <input type="text" class="form-control" id="busqueda" placeholder="Buscar por email o nombre...">
+                        </div>
+
+                        <!-- Tabla de usuarios -->
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Nombre</th>
+                                        <th>Apellido</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usuariosTableBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            <i class="fas fa-spinner fa-spin"></i> Cargando usuarios...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mensaje de sin resultados -->
+                        <div id="sinResultados" class="alert alert-info m-3 d-none" role="alert">
+                            <i class="fas fa-info-circle"></i> No hay usuarios que mostrar.
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>Total de usuarios: <strong id="totalUsuarios">0</strong></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="modalConfirmar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle"></i> Confirmar Acción
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="mensajeConfirmacion"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnConfirmar">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalles -->
+    <div class="modal fade" id="modalDetalles" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-circle"></i> Detalles del Usuario
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <p><strong>ID:</strong> <span id="detalleId"></span></p>
+                            <p><strong>Email:</strong> <span id="detalleEmail"></span></p>
+                            <p><strong>Nombre:</strong> <span id="detalleNombre"></span></p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p><strong>Apellido:</strong> <span id="detalleApellido"></span></p>
+                            <p><strong>Estado:</strong> <span id="detalleEstado"></span></p>
+                            <p><strong>Creado:</strong> <span id="detalleFechaCreacion" class="text-muted" style="font-size: 0.85rem;"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
